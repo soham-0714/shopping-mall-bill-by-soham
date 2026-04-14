@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premium Animated Bill Generator</title>
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #1e3c72, #2a5298);
+        color: white;
+        margin: 0;
+        padding: 0;
+        animation: fadeIn 1s ease-in;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .container {
+        max-width: 900px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0;
+        border-radius: 10px;
+        border: none;
+        outline: none;
+    }
+
+    button {
+        padding: 12px;
+        border: none;
+        border-radius: 10px;
+        margin: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+    .generate { background: #00c9a7; }
+    .print { background: #ffb347; }
+    .whatsapp { background: #25D366; }
+
+    button:hover {
+        transform: scale(1.05);
+        opacity: 0.9;
+    }
+
+    .bill {
+        background: white;
+        color: black;
+        padding: 20px;
+        border-radius: 15px;
+        margin-top: 20px;
+        animation: slideUp 0.5s ease;
+    }
+
+    @keyframes slideUp {
+        from { transform: translateY(30px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    .premium {
+        border: 3px solid gold;
+        box-shadow: 0 0 20px gold;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🧾 Premium Bill Generator</h1>
+
+    <input type="text" id="customer" placeholder="Customer Name">
+    <input type="text" id="item" placeholder="Item Name">
+    <input type="number" id="price" placeholder="Price">
+
+    <select id="payment">
+        <option value="Cash">Cash</option>
+        <option value="UPI">UPI</option>
+        <option value="Card">Card</option>
+    </select>
+
+    <input type="text" id="phone" placeholder="WhatsApp Number (with country code)">
+
+    <button class="generate" onclick="generateBill()">Generate Bill</button>
+    <button class="print" onclick="printBill()">Print Bill</button>
+    <button class="whatsapp" onclick="sendWhatsApp()">Send to WhatsApp</button>
+
+    <div id="billOutput"></div>
+</div>
+
+<script>
+function generateBill() {
+    let customer = document.getElementById('customer').value;
+    let item = document.getElementById('item').value;
+    let price = document.getElementById('price').value;
+    let payment = document.getElementById('payment').value;
+
+    if(!customer || !item || !price) {
+        alert("Please fill all fields");
+        return;
+    }
+
+    let gst = (price * 0.18).toFixed(2);
+    let total = (parseFloat(price) + parseFloat(gst)).toFixed(2);
+
+    let billHTML = `
+        <div class="bill premium">
+            <h2>Shopping Mall Invoice</h2>
+            <p><b>Customer:</b> ${customer}</p>
+            <p><b>Item:</b> ${item}</p>
+            <p><b>Price:</b> ₹${price}</p>
+            <p><b>GST (18%):</b> ₹${gst}</p>
+            <h3>Total: ₹${total}</h3>
+            <p><b>Payment Mode:</b> ${payment}</p>
+            <p><b>Date:</b> ${new Date().toLocaleString()}</p>
+        </div>
+    `;
+
+    document.getElementById('billOutput').innerHTML = billHTML;
+}
+
+function printBill() {
+    let content = document.getElementById('billOutput').innerHTML;
+    let win = window.open('', '', 'width=800,height=600');
+    win.document.write(content);
+    win.document.close();
+    win.print();
+}
+
+function sendWhatsApp() {
+    let phone = document.getElementById('phone').value;
+    let bill = document.getElementById('billOutput').innerText;
+
+    if(!phone) {
+        alert("Enter WhatsApp number");
+        return;
+    }
+
+    let url = `https://wa.me/${phone}?text=${encodeURIComponent(bill)}`;
+    window.open(url, '_blank');
+}
+</script>
+
+</body>
+</html>
